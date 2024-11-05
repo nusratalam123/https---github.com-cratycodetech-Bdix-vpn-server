@@ -9,6 +9,7 @@ export async function jwtAuth(req: Request, res: Response, next: NextFunction) {
   if (
     req.path.endsWith("/login") ||
     req.path.endsWith("/signup") ||
+    req.path.endsWith("/reset-password") ||
     !req.path.includes("/api/v1")
   ) {
     next();

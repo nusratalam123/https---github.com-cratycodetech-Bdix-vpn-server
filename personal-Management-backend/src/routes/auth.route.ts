@@ -4,6 +4,7 @@ import {
   logout,
   adminSignup,
   adminLogin,
+  resetPassword,
 } from "../controller/auth.controller";
 
 const router = Router();
@@ -14,7 +15,13 @@ router.post("/admin/signup", adminSignup);
 // admin login
 router.post("/admin/login", adminLogin);
 
-// user logout
+//admin logout
 router.delete("/logout", logout);
+
+// forgot password
+//router.post("/forgot-password", forgotPassword);
+
+// reset password
+router.post("/reset-password", resetPassword);
 
 export default router;
