@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import Attendance from "../model/attendance.model";
-import { startOfDay, endOfDay, startOfMonth, endOfMonth, format } from "date-fns";  // date-fns library to get start and end of today
+import { startOfDay, endOfDay, startOfMonth, endOfMonth, format } from "date-fns";
 import Employee from "../model/employee.model";
 import cron from "node-cron";
 
-
+// Function to get all employees attendance
 export const getAllEmployeeAttendance = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const attendanceRecords = await Attendance.find({})
@@ -42,28 +42,26 @@ export const getTodayPresentEmployees = async (req: Request, res: Response, next
 };
 
 
-// Function to get today's "OnLeave" employees
+// Function to get today's "Absent" employees
 export const getTodayAbsentEmployees = async (req: Request, res: Response,next: NextFunction) => {
   try {
     const today = new Date();
     const start = startOfDay(today);
     const end = endOfDay(today);
 
-    const onLeaveEmployees = await Attendance.find({
+    const absentEmployees = await Attendance.find({
       status: "Absent",
       date: { $gte: start, $lte: end },
     });
 
     res.status(200).json({
-      count: onLeaveEmployees.length,
-      employees: onLeaveEmployees,
+      count: absentEmployees.length,
+      employees: absentEmployees,
     });
   } catch (error) {
     next(error);
   }
 };
-
-
 
 // Function to get today's "LateArrival" employees
 export const getTodayLateArrivalEmployees = async (req: Request, res: Response) => {
@@ -86,6 +84,7 @@ export const getTodayLateArrivalEmployees = async (req: Request, res: Response) 
   }
 };
 
+// Function to get single employee attendance
 export const getSingleEmployee = async (
   req: Request,
   res: Response,
@@ -164,7 +163,6 @@ export const getMonthlyAttendanceCounts = async (
   }
 };
 
-
 // Function to get employee monthly attendance
 export const getEmployeeMonthlyAttendance = async (
   req: Request,
@@ -175,7 +173,6 @@ export const getEmployeeMonthlyAttendance = async (
     const month = parseInt(req.query.month as string);
     const year = parseInt(req.query.year as string);
 
-    // Calculate the start and end of the specified month
     const start = startOfMonth(new Date(year, month - 1));
     const end = endOfMonth(new Date(year, month - 1));
 
@@ -195,7 +192,6 @@ export const getEmployeeMonthlyAttendance = async (
 
     const present=totalPresent+totalLateArrival
 
-    // Return the summary
     res.status(200).json({
       employeeId,
       month,
@@ -210,7 +206,7 @@ export const getEmployeeMonthlyAttendance = async (
   }
 };
 
-// Function to get employee monthly attendance
+// Function to get employee monthly late arrivalattendance
 export const getEmployeeMonthlyLateArrival = async (
   req: Request,
   res: Response,
@@ -234,7 +230,6 @@ export const getEmployeeMonthlyLateArrival = async (
       (record) => record.status === "LateArrival",
     ).length;
 
-    // Return the summary
     res.status(200).json({
       employeeId,
       month,
@@ -247,8 +242,6 @@ export const getEmployeeMonthlyLateArrival = async (
       .json({ message: "Error retrieving attendance data", error });
   }
 };
-
-
 
 // Utility function to check time range
 const isTimeInRange = (time: string, start: string, end: string) => {
@@ -276,11 +269,12 @@ cron.schedule("0 0 1 * *", async () => {
   }
 });
 
+// Function to post attendance
 export const markAttendance = async (req: Request, res: Response) => {
   try {
     const { employeeId } = req.body;
     const date = startOfDay(new Date());
-    const arrivalTime = req.body.arrivalTime || format(new Date(), "HH:mm"); // Set to current time if not provided
+    const arrivalTime = req.body.arrivalTime || format(new Date(), "HH:mm");
     let status = "Absent"; // Default status
 
     // Determine the status based on arrivalTime
@@ -295,7 +289,6 @@ export const markAttendance = async (req: Request, res: Response) => {
       // Fetch all employees from the Employee collection
       const allEmployees = await Employee.find();
 
-      // Loop through each employee
       const promises = allEmployees.map(async (employee) => {
         const attendanceRecord = await Attendance.findOne({
           employeeId: employee._id,
@@ -312,12 +305,11 @@ export const markAttendance = async (req: Request, res: Response) => {
           await Attendance.updateOne(
             { employeeId: employee._id, date: { $gte: start, $lte: end } },
             { $set: { status: "Absent", date: date } },
-            { upsert: true }, // Create a new document if no match is found
+            { upsert: true }, 
           );
         }
       });
 
-      // Wait for all promises to complete
       await Promise.all(promises);
     }
 
@@ -347,6 +339,7 @@ export const markAttendance = async (req: Request, res: Response) => {
   }
 };
 
+// Function to update attendance
 export const updateattendance = async (
   req: Request,
   res: Response,
@@ -370,6 +363,7 @@ export const updateattendance = async (
   }
 };
 
+// Function to delete attendance
 export const deleteAttendance = async (
   req: Request,
   res: Response,

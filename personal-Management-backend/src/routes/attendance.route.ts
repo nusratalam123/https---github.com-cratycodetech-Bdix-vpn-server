@@ -39,13 +39,13 @@ router.get("/all", getAllEmployeeAttendance);
 // get single employee attandance
 router.get("/single/:id", getSingleEmployee);
 
-// employee create
+// create employee attendance
 router.post("/create", markAttendance);
 
-//update employee
+//update employee attendance
 router.put("/update/:id", updateattendance);
 
-// delete employee
+// delete employee attendance
 router.delete("/delete/:id", deleteAttendance);
 
 export default router;
