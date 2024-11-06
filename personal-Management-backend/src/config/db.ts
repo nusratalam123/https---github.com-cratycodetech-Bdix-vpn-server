@@ -1,12 +1,16 @@
-import { connect, set } from "mongoose";
-import secrets from "./secret";
-
-set("strictQuery", false);
+import mongoose from "mongoose";
+import config from "./secret";
+mongoose.set("strictQuery", false);
 
 const connectDB = async () => {
   try {
-    await connect(secrets.MONGO_URL);
-    console.log("mongodb connection success!");
+    const status = mongoose.connection.readyState;
+
+    if (status === 0) {
+      await mongoose.connect(config.MONGO_URL as string);
+    }
+
+    console.log("mongodb connection successful");
   } catch (err) {
     console.log("mongodb connection failed!", err);
   }

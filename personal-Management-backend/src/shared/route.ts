@@ -4,9 +4,8 @@ import employeeRoutes from "./../routes/employee.route";
 import dashbroadRoutes from "./../routes/adminDashbroad.route";
 import attendanceRoutes from "./../routes/attendance.route";
 import leaveRoutes from "./../routes/leave.route";
-
-
-
+import salaryRoutes from "./../routes/salary.route";
+import announcementRoutes from "./../routes/announcement.route";
 
 
 const router = Router();
@@ -22,9 +21,8 @@ router.use("/employee", employeeRoutes);
 router.use("/dashbroad", dashbroadRoutes);
 router.use("/attendance", attendanceRoutes);
 router.use("/leave", leaveRoutes);
-
-
-
+router.use("/salary", salaryRoutes);
+router.use("/announcement", announcementRoutes);
 
 
 
