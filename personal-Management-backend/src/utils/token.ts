@@ -46,7 +46,7 @@ export const getBearerToken = async (req: Request) => {
     } else {
       throw new Error("Token is unavailable");
     }
-  } catch (err) {
+  } catch (err:any) {
     return err;
   }
 };
