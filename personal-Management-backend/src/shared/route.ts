@@ -6,6 +6,9 @@ import attendanceRoutes from "./../routes/attendance.route";
 import leaveRoutes from "./../routes/leave.route";
 import salaryRoutes from "./../routes/salary.route";
 import announcementRoutes from "./../routes/announcement.route";
+import geoFancingRoutes from "./../routes/geoFancing.route";
+
+
 
 
 const router = Router();
@@ -23,6 +26,8 @@ router.use("/attendance", attendanceRoutes);
 router.use("/leave", leaveRoutes);
 router.use("/salary", salaryRoutes);
 router.use("/announcement", announcementRoutes);
+router.use("/geofancing", geoFancingRoutes);
+
 
 
 
