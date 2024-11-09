@@ -5,6 +5,7 @@ export type Attendance = {
   arrivalTime?: string;
   totalPresent: number;
   totalLateArrival: number;
+  totalAttendence: number;
   date: Date;
   createdAt: Date;
   updatedAt: Date;

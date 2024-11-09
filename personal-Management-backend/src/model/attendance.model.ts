@@ -31,6 +31,10 @@ const attendanceSchema = new Schema<Attendance>(
       type: Number,
       default: 0,
     },
+    totalAttendence: {
+      type: Number,
+      default: 0, 
+    },
     date: {
       type: Date,
       required: true,

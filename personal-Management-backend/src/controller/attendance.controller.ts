@@ -28,7 +28,7 @@ export const getTodayPresentEmployees = async (req: Request, res: Response, next
     const end = endOfDay(today);
 
     const presentEmployees = await Attendance.find({
-      status: "Present",
+      status: { $in: ["Present", "LateArrival"] },
       date: { $gte: start, $lte: end },
     });
 
@@ -324,9 +324,9 @@ export const markAttendance = async (req: Request, res: Response) => {
         officeHour: "09:00",
         $inc:
           status === "Present"
-            ? { totalPresent: 1 }
+            ? { totalPresent: 1 ,totalAttendence:1}
             : status === "LateArrival"
-              ? { totalLateArrival: 1 }
+              ? { totalLateArrival: 1 ,totalAttendence:1}
               : {},
       },
       { new: true, upsert: true },
