@@ -19,6 +19,10 @@ const employeeSchema = new Schema<Employee>(
       type: String,
       required: true,
     },
+    address: {
+      type: String,
+      required: true,
+    },
     // employeeStatus: {
     //   type: String,
     //   required: true,

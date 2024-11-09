@@ -3,6 +3,7 @@ export type Employee = {
   employeeName: string;
   employeeSalary: string;
   employeeNumber: string;
+  address: string;
   departmentName: string;
   joiningDate: Date;
 };
