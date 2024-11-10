@@ -42,6 +42,9 @@ router.get("/single/:id", getSingleEmployee);
 // create employee attendance
 router.post("/create", markAttendance);
 
+// create employee attendance
+router.post("/create", markAttendance);
+
 //update employee attendance
 router.put("/update/:id", updateattendance);
 

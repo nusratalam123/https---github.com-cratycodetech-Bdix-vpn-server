@@ -3,6 +3,7 @@ import Attendance from "../model/attendance.model";
 import { startOfDay, endOfDay, startOfMonth, endOfMonth, format } from "date-fns";
 import Employee from "../model/employee.model";
 import cron from "node-cron";
+import moment from "moment";
 
 // Function to get all employees attendance
 export const getAllEmployeeAttendance = async (req: Request, res: Response, next: NextFunction) => {
@@ -268,6 +269,39 @@ cron.schedule("0 0 1 * *", async () => {
     console.error("Error resetting totalPresent count:", error);
   }
 });
+
+
+export const initializeDailyAttendance = async () => {
+  const today = moment().startOf("day").toDate();
+
+  try {
+    const employees = await Employee.find();
+
+
+    for (const employee of employees) {
+      const existingAttendance = await Attendance.findOne({
+        employeeId: employee._id,
+        date: today,
+      });
+
+      if (!existingAttendance) {
+        // Create 'Absent' attendance record for today
+        await Attendance.create({
+          employeeId: employee._id,
+          status: "Absent",
+          date: today,
+        });
+      }
+    }
+
+    console.log(
+      "Daily attendance initialized with Absent status for all employees.",
+    );
+  } catch (error) {
+    console.error("Error initializing daily attendance:", error);
+  }
+};
+
 
 // Function to post attendance
 export const markAttendance = async (req: Request, res: Response) => {
