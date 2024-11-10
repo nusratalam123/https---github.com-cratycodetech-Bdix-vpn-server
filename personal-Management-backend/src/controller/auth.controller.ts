@@ -13,11 +13,16 @@ export const adminSignup = async (
   next: NextFunction,
 ) => {
   try {
-    const { adminId, email, password } = req.body;
+    const { adminId, email, password, confirmPassword } = req.body;
     const admin = await Admin.findOne({ email: email });
 
     if (admin) {
       throw new Error("email already exist");
+    }
+
+    // Check if password and confirmPassword match
+    if (password !== confirmPassword) {
+      throw new Error("Passwords do not match");
     }
 
     const savedAdmin = await Admin.create(req.body);
