@@ -7,13 +7,8 @@ import { jwtAuth } from "../utils/jwt-auth";
 const app = express();
 
 ///middleware
-app.use(
-  cors({
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST", "PUT", "PATCH","DELETE"],
-    credentials: true,
-  }),
-);
+app.use(cors());
+
 app.use(cookieParser());
 app.use(express.json());
 app.use(morgan("dev"));
