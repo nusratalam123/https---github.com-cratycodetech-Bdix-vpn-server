@@ -9,6 +9,7 @@ import {
   getEmployeeMonthlyLateArrival,
   getSingleEmployee,
   markAttendance,
+  setDefaultAttendance,
   updateattendance,
   deleteAttendance,
 } from "../controller/attendance.controller";
@@ -38,6 +39,9 @@ router.get("/all", getAllEmployeeAttendance);
 
 // get single employee attandance
 router.get("/single/:id", getSingleEmployee);
+
+// set default employee attandance
+router.post("/set-default-attendance",setDefaultAttendance);
 
 // create employee attendance
 router.post("/create", markAttendance);
