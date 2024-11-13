@@ -51,8 +51,6 @@ export const adminLogin = async (
 
     const admin = await Admin.findOne({ email });
 
-    //console.log(admin);
-
     if (!admin) {
       throw new Error("No admin found. Please create an account");
     }
