@@ -5,6 +5,7 @@ import {
   addLeave,
   getSingleLeave,
   getCountLeaveTypes,
+  getMonthlyLeaveCounts,
   getAllLeave,
 } from "../controller/leave.controller";
 
@@ -18,6 +19,9 @@ router.get("/single/:id", getSingleLeave);
 
 // get count value according to  type of leave  employee
 router.get("/type", getCountLeaveTypes);
+
+// get count value according to  type of leave  employee
+router.get("/leave-counts", getMonthlyLeaveCounts);
 
 // employee create leave
 router.post("/create", addLeave);

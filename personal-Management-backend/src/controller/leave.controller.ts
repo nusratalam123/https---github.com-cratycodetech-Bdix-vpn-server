@@ -1,5 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import Leave from "../model/leave.model";
+import { startOfMonth, endOfMonth } from "date-fns";
+import { ObjectId } from "mongodb";
 
 export const getAllLeave = async (
   _: Request,
@@ -39,14 +41,73 @@ export const getSingleLeave = async (
   }
 };
 
+
+// Controller to get monthly leave counts for an employee
+export const getMonthlyLeaveCounts = async (req: Request, res: Response,next: NextFunction) => {
+  try {
+    const { employeeId, year, month } = req.query;
+    console.log(employeeId, year, month);
+
+    if (!employeeId || !year || !month) {
+      return res
+        .status(400)
+        .json({ error: "Employee ID, year, and month are required" });
+    }
+
+    const employeeObjectId = new ObjectId(employeeId as string);
+    const startDate = startOfMonth(new Date(Number(year), Number(month) - 1));
+    const endDate = endOfMonth(new Date(Number(year), Number(month) - 1));
+
+    const leaveCounts = await Leave.aggregate([
+      {
+        $match: {
+          employeeId: employeeObjectId,
+          createdAt: { $gte: startDate, $lte: endDate },
+        },
+      },
+      {
+        $group: {
+          _id: "$leaveType",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const response = {
+      "Non-Leave":0,
+      "Paid-Leave": 0,
+      "Sick-Leave": 0,
+    };
+
+    leaveCounts.forEach((leave) => {
+      response[leave._id as keyof typeof response] = leave.count;
+    });
+
+    // Get the total number of days in the current month
+    const today = new Date();
+    const currentMonthTotalDays = new Date(Number(year), Number(month) - 1 + 1, 0).getDate(); // Days in the month
+    const currentDay = today.getDate(); 
+    
+    // Calculate Non-Leave as (Total Days in the month till today) - (Paid-Leave + Sick-Leave)
+    const nonLeave = currentDay - (response["Paid-Leave"] + response["Sick-Leave"]);
+    response["Non-Leave"] = nonLeave >= 0 ? nonLeave : 0; 
+
+
+    return res.json({ employeeId, year, month, leaveCounts: response });
+  } catch (error:any) {
+    next(error)
+  }
+};
+
+
 // Function to count leave types
 export const getCountLeaveTypes = async (req: Request, res: Response) => {
   try {
     const leaveCounts = await Leave.aggregate([
       {
         $group: {
-          _id: "$leaveType", // Group by leaveType
-          count: { $sum: 1 }, // Count each leave type
+          _id: "$leaveType", 
+          count: { $sum: 1 }, 
         },
       },
     ]);
