@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {
   getAllAnnouncement,
+  getLastAnnouncement,
   getSingleAnnouncement,
   getAnnouncementsByDepartment,
   getAnnouncementsByEmployee,
@@ -13,6 +14,9 @@ const router = Router();
 
 // get all Announcement
 router.get("/all", getAllAnnouncement);
+
+// get latest Announcement
+router.get("/latest", getLastAnnouncement);
 
 // get single Announcement
 router.get("/single/:id", getSingleAnnouncement);

@@ -271,12 +271,12 @@ cron.schedule("0 0 1 * *", async () => {
 });
 
 
-export const initializeDailyAttendance = async () => {
+//set default initialization
+export const setDefaultAttendance = async (req: Request, res: Response,next: NextFunction) => {
   const today = moment().startOf("day").toDate();
 
   try {
     const employees = await Employee.find();
-
 
     for (const employee of employees) {
       const existingAttendance = await Attendance.findOne({
@@ -285,7 +285,6 @@ export const initializeDailyAttendance = async () => {
       });
 
       if (!existingAttendance) {
-        // Create 'Absent' attendance record for today
         await Attendance.create({
           employeeId: employee._id,
           status: "Absent",
@@ -294,13 +293,14 @@ export const initializeDailyAttendance = async () => {
       }
     }
 
-    console.log(
-      "Daily attendance initialized with Absent status for all employees.",
-    );
-  } catch (error) {
-    console.error("Error initializing daily attendance:", error);
+    res.status(200).json({
+      message: "Daily attendance set to Absent for all employees.",
+    });
+  } catch (error: any) {
+    next(error);
   }
 };
+
 
 
 // Function to post attendance
@@ -316,36 +316,39 @@ export const markAttendance = async (req: Request, res: Response) => {
       status = "Present";
     } else if (arrivalTime && isTimeInRange(arrivalTime, "09:10", "17:00")) {
       status = "LateArrival";
-    } else {
-      const start = startOfDay(date);
-      const end = endOfDay(date);
 
-      // Fetch all employees from the Employee collection
-      const allEmployees = await Employee.find();
+    }  
+    // } else {
+    //   const start = startOfDay(date);
+    //   const end = endOfDay(date);
 
-      const promises = allEmployees.map(async (employee) => {
-        const attendanceRecord = await Attendance.findOne({
-          employeeId: employee._id,
-          date: { $gte: start, $lte: end },
-        });
+    //   // Fetch all employees from the Employee collection
+    //   const allEmployees = await Employee.find();
 
-        // If no attendance record or the status is neither "Present" nor "LateArrival"
-        if (
-          !attendanceRecord ||
-          (attendanceRecord.status !== "Present" &&
-            attendanceRecord.status !== "LateArrival")
-        ) {
-          // Either update existing record to "Absent" or create a new record with "Absent" status
-          await Attendance.updateOne(
-            { employeeId: employee._id, date: { $gte: start, $lte: end } },
-            { $set: { status: "Absent", date: date } },
-            { upsert: true }, 
-          );
-        }
-      });
+    //   const promises = allEmployees.map(async (employee) => {
+    //     const attendanceRecord = await Attendance.findOne({
+    //       employeeId: employee._id,
+    //       status: { $in: ["Present", "LateArrival"] },
+    //       date: { $gte: start, $lte: end },
+    //     });
 
-      await Promise.all(promises);
-    }
+    //     // If no attendance record or the status is neither "Present" nor "LateArrival"
+    //     if (
+    //       !attendanceRecord ||
+    //       (attendanceRecord.status !== "Present" &&
+    //         attendanceRecord.status !== "LateArrival")
+    //     ) {
+    //       // Either update existing record to "Absent" or create a new record with "Absent" status
+    //       await Attendance.updateOne(
+    //         { employeeId: employee._id, date: { $gte: start, $lte: end } },
+    //         { $set: { status: "Absent", date: date } },
+    //         { upsert: true }, 
+    //       );
+    //     }
+    //   });
+
+    //   await Promise.all(promises);
+    // }
 
     // Update attendance and increment totalPresent or totalLateArrival
     const attendance = await Attendance.findOneAndUpdate(

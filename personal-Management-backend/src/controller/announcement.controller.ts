@@ -18,6 +18,24 @@ export const getAllAnnouncement = async (
   }
 };
 
+// Controller to get the latest announcement
+export const getLastAnnouncement = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const latestAnnouncement = await Announcement.findOne()
+      .sort({ createdAt: -1 })
+      .exec();
+
+    if (!latestAnnouncement) {
+      return res.status(404).json({ message: "No announcements found" });
+    }
+
+    res.status(200).json(latestAnnouncement);
+  } catch (err: any) {
+    next(err);
+  }
+};
+
+
 export const getSingleAnnouncement = async (
   req: Request,
   res: Response,
