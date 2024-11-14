@@ -8,7 +8,7 @@ export const geocodeLocation = async (
   next: NextFunction,
 ) => {
   try {
-    const { location, radius } = req.body;
+    const { employeeId, employeeName, location, radius } = req.body;
 
     if (!location) {
       return res.status(400).json({ message: "Location is required" });
@@ -30,6 +30,8 @@ export const geocodeLocation = async (
       const { lat, lon } = data[0];
 
       const geoFancingData = await GeoFancing.create({
+        employeeId: employeeId,
+        employeeName: employeeName,
         location: {
           type: "Point",
           coordinates: [lon, lat], // Save longitude first, then latitude
@@ -53,6 +55,27 @@ export const geocodeLocation = async (
     }
   } catch (error: any) {
     next(error);
+  }
+};
+
+export const getSingleGeocodeLocation = async (
+  req: Request,
+  res: Response,
+  next: NextFunction,
+) => {
+  try {
+    const geocodeLocation = await GeoFancing.findById(req.params.id);
+
+    if (!geocodeLocation) {
+      throw new Error("No record found");
+    }
+
+    res.status(200).json({
+      message: "geocodeLocation get successully",
+      data: geocodeLocation,
+    });
+  } catch (err: any) {
+    next(err);
   }
 };
 
