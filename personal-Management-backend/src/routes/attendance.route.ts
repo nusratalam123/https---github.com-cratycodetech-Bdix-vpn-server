@@ -3,6 +3,8 @@ import {
   getTodayPresentEmployees,
   getTodayAbsentEmployees,
   getTodayLateArrivalEmployees,
+  getCountTodayPresentEmployees,
+  getCountTodayAbsentEmployees,
   getMonthlyAttendanceCounts,
   getAllEmployeeAttendance,
   getEmployeeMonthlyAttendance,
@@ -19,11 +21,17 @@ const router = Router();
 // get today present employee
 router.get("/TotalPresent", getTodayPresentEmployees);
 
+// get today count  present employee
+router.get("/countPresent", getCountTodayPresentEmployees);
+
 // get today Late Arrival employee
 router.get("/TotalLate", getTodayLateArrivalEmployees);
 
 // get today absent employee
 router.get("/TotalAbsent", getTodayAbsentEmployees);
+
+// get today count absent employee
+router.get("/countAbsent", getCountTodayAbsentEmployees);
 
 // get all employee monthly present
 router.get("/Total-Month-present", getMonthlyAttendanceCounts);
@@ -42,9 +50,6 @@ router.get("/single/:id", getSingleEmployee);
 
 // set default employee attandance
 router.post("/set-default-attendance",setDefaultAttendance);
-
-// create employee attendance
-router.post("/create", markAttendance);
 
 // create employee attendance
 router.post("/create", markAttendance);

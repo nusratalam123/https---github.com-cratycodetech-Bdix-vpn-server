@@ -35,7 +35,29 @@ export const getTodayPresentEmployees = async (req: Request, res: Response, next
 
     res.status(200).json({
       count: presentEmployees.length,
+      name:"present",
       employees: presentEmployees,
+    });
+  } catch (error: any) {
+    next(error);
+  }
+};
+
+// Function to get today's "Present" employees
+export const getCountTodayPresentEmployees = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const today = new Date();
+    const start = startOfDay(today);
+    const end = endOfDay(today);
+
+    const presentEmployees = await Attendance.find({
+      status: { $in: ["Present", "LateArrival"] },
+      date: { $gte: start, $lte: end },
+    });
+
+    res.status(200).json({
+      count: presentEmployees.length,
+      name:"present",
     });
   } catch (error: any) {
     next(error);
@@ -57,7 +79,29 @@ export const getTodayAbsentEmployees = async (req: Request, res: Response,next: 
 
     res.status(200).json({
       count: absentEmployees.length,
+      name:"absent",
       employees: absentEmployees,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Function to get today's "Absent" employees
+export const getCountTodayAbsentEmployees = async (req: Request, res: Response,next: NextFunction) => {
+  try {
+    const today = new Date();
+    const start = startOfDay(today);
+    const end = endOfDay(today);
+
+    const absentEmployees = await Attendance.find({
+      status: "Absent",
+      date: { $gte: start, $lte: end },
+    });
+
+    res.status(200).json({
+      count: absentEmployees.length,
+      name:"absent",
     });
   } catch (error) {
     next(error);
