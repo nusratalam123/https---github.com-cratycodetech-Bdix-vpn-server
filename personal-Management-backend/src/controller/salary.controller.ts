@@ -1,5 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import Salary from "../model/salary.model";
+import {
+  startOfDay,
+  endOfDay,
+  startOfMonth,
+  endOfMonth,
+  format,
+} from "date-fns";
+
 
 export const getAllSalary = async (_: Request, res: Response, next: NextFunction) => {
   try {
@@ -34,6 +42,55 @@ export const getSingleSalary = async (
     next(err);
   }
 };
+
+// Function to get count salary status distribution 
+export const getCountDistributionSalary = async (req: Request, res: Response,next: NextFunction) => {
+  try {
+    const distribution = await Salary.find({
+      salaryStatus: "Distribution"
+    });
+
+    res.status(200).json({
+      count: distribution.length,
+      name: "Distribution",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Function to get count salary status pending 
+export const getCountPendingSalary = async (req: Request, res: Response,next: NextFunction) => {
+  try {
+    const pending = await Salary.find({
+      salaryStatus: "Pending",
+    });
+
+    res.status(200).json({
+      count: pending.length,
+      name: "pending",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Function to get count salary status deduction
+export const getCountDeductionSalary = async (req: Request, res: Response,next: NextFunction) => {
+  try {
+    const deduction = await Salary.find({
+      salaryStatus: "Deduction",
+    });
+
+    res.status(200).json({
+      count: deduction.length,
+      name: "deduction",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 
 export const addSalary = async (req: Request, res: Response, next: NextFunction) => {
   try {

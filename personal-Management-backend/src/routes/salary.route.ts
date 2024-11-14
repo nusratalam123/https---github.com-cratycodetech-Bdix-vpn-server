@@ -2,6 +2,9 @@ import { Router } from "express";
 import {
   getAllSalary,
   getSingleSalary,
+  getCountDistributionSalary,
+  getCountPendingSalary,
+  getCountDeductionSalary,
   addSalary,
   updateSalary,
   deleteSalary,
@@ -14,6 +17,15 @@ router.get("/all", getAllSalary);
 
 // get single salary
 router.get("/single/:id", getSingleSalary);
+
+// get count Distribution count salary
+router.get("/distribution", getCountDistributionSalary);
+
+// get count deduction  count salary
+router.get("/deduction", getCountDeductionSalary);
+
+// get count Pending  count salary
+router.get("/pending", getCountPendingSalary);
 
 // create employee salary
 router.post("/create", addSalary);

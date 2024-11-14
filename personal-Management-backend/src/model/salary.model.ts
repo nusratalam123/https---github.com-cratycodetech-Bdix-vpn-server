@@ -11,7 +11,7 @@ const salarySchema = new Schema<Salary>(
     },
     salaryStatus: {
       type: String,
-      enum: ["Distribution", "Pending"],
+      enum: ["Distribution", "Pending","Deduction"],
       default: "Distribution",
     },
     baseSalary: {
