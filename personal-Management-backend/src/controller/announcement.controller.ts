@@ -7,7 +7,9 @@ export const getAllAnnouncement = async (
   next: NextFunction,
 ) => {
   try {
-    const announcements = await Announcement.find({});
+ const announcements = await Announcement.find()
+   .sort({ createdAt: -1 })
+   .exec();
 
     res.status(200).json({
       message: "Announcements get successfully",
