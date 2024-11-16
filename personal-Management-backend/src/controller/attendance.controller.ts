@@ -227,12 +227,15 @@ export const getEmployeeMonthlyAttendance = async (
       date: { $gte: start, $lte: end },
     });
 
-    // Count the total days marked as "Present" and "LateArrival"
+    // Count the total days marked as "Present" and "LateArrival" and "absent"
     const totalPresent = attendanceRecords.filter(
       (record) => record.status === "Present",
     ).length;
     const totalLateArrival = attendanceRecords.filter(
       (record) => record.status === "LateArrival",
+    ).length;
+    const totalAbssent = attendanceRecords.filter(
+      (record) => record.status === "Absent",
     ).length;
 
     const present=totalPresent+totalLateArrival
@@ -243,6 +246,7 @@ export const getEmployeeMonthlyAttendance = async (
       year,
       present,
       totalLateArrival,
+      totalAbssent,
     });
   } catch (error) {
     res
@@ -287,6 +291,44 @@ export const getEmployeeMonthlyLateArrival = async (
       .json({ message: "Error retrieving attendance data", error });
   }
 };
+
+// Function to get employee monthly absent attendance
+export const getEmployeeMonthlyAbsent = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const { employeeId } = req.params;
+    const month = parseInt(req.query.month as string);
+    const year = parseInt(req.query.year as string);
+
+    // Calculate the start and end of the specified month
+    const start = startOfMonth(new Date(year, month - 1));
+    const end = endOfMonth(new Date(year, month - 1));
+
+    // Find attendance records for the employee within the specified month
+    const attendanceRecords = await Attendance.find({
+      employeeId,
+      date: { $gte: start, $lte: end },
+    });
+
+    const totalLateArrival = attendanceRecords.filter(
+      (record) => record.status === "Absent",
+    ).length;
+
+    res.status(200).json({
+      employeeId,
+      month,
+      year,
+      totalLateArrival,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error retrieving attendance data", error });
+  }
+};
+
 
 // Utility function to check time range
 const isTimeInRange = (time: string, start: string, end: string) => {

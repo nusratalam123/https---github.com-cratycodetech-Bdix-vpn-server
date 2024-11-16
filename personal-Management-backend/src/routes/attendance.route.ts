@@ -9,6 +9,7 @@ import {
   getAllEmployeeAttendance,
   getEmployeeMonthlyAttendance,
   getEmployeeMonthlyLateArrival,
+  getEmployeeMonthlyAbsent,
   getSingleEmployee,
   markAttendance,
   setDefaultAttendance,
@@ -41,6 +42,9 @@ router.get("/monthly/:employeeId", getEmployeeMonthlyAttendance);
 
 // get sigle employee monthly late arrival
 router.get("/monthly-late/:employeeId", getEmployeeMonthlyLateArrival);
+
+// get sigle employee monthly late arrival
+router.get("/monthly-absent/:employeeId", getEmployeeMonthlyAbsent);
 
 // get all employee attandance
 router.get("/all", getAllEmployeeAttendance);
