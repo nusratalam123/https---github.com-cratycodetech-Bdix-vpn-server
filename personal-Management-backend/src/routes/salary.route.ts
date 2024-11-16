@@ -19,13 +19,13 @@ router.get("/all", getAllSalary);
 router.get("/single/:id", getSingleSalary);
 
 // get count Distribution count salary
-router.get("/distribution", getCountDistributionSalary);
+router.get("/distribution", getCountDistributionSalary); //for graph
 
 // get count deduction  count salary
-router.get("/deduction", getCountDeductionSalary);
+router.get("/deduction", getCountDeductionSalary);//for graph
 
 // get count Pending  count salary
-router.get("/pending", getCountPendingSalary);
+router.get("/pending", getCountPendingSalary);//for graph
 
 // create employee salary
 router.post("/create", addSalary);
