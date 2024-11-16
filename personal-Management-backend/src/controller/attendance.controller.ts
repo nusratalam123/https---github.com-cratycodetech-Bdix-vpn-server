@@ -1,9 +1,17 @@
 import { NextFunction, Request, Response } from "express";
 import Attendance from "../model/attendance.model";
-import { startOfDay, endOfDay, startOfMonth, endOfMonth, format } from "date-fns";
+import {
+  startOfDay,
+  endOfDay,
+  startOfMonth,
+  endOfMonth,
+  format
+} from "date-fns";
 import Employee from "../model/employee.model";
 import cron from "node-cron";
 import moment from "moment";
+import { eachDayOfInterval } from "date-fns/fp";
+
 
 // Function to get all employees attendance
 export const getAllEmployeeAttendance = async (req: Request, res: Response, next: NextFunction) => {
@@ -241,11 +249,8 @@ export const getEmployeeMonthlyAttendance = async (
     const present=totalPresent+totalLateArrival
 
     res.status(200).json({
-      employeeId,
-      month,
-      year,
+      msg: " get Total monthly present employee",
       present,
-      totalLateArrival,
       totalAbssent,
     });
   } catch (error) {
@@ -269,21 +274,27 @@ export const getEmployeeMonthlyLateArrival = async (
     const start = startOfMonth(new Date(year, month - 1));
     const end = endOfMonth(new Date(year, month - 1));
 
+    // Get all the days in the specified month
+    const daysInMonth = eachDayOfInterval({ start, end });
+    const totalDaysInMonth = daysInMonth.length;
+
     // Find attendance records for the employee within the specified month
     const attendanceRecords = await Attendance.find({
       employeeId,
       date: { $gte: start, $lte: end },
     });
 
+    // Count the total number of late and not-late arrivals
     const totalLateArrival = attendanceRecords.filter(
       (record) => record.status === "LateArrival",
     ).length;
 
+    const totalNotLateArrival = totalDaysInMonth - totalLateArrival;
+
     res.status(200).json({
-      employeeId,
-      month,
-      year,
+      msg:" get Total monthly LateArrival",
       totalLateArrival,
+      totalNotLateArrival,
     });
   } catch (error) {
     res
@@ -291,6 +302,7 @@ export const getEmployeeMonthlyLateArrival = async (
       .json({ message: "Error retrieving attendance data", error });
   }
 };
+
 
 // Function to get employee monthly absent attendance
 export const getEmployeeMonthlyAbsent = async (
@@ -312,7 +324,7 @@ export const getEmployeeMonthlyAbsent = async (
       date: { $gte: start, $lte: end },
     });
 
-    const totalLateArrival = attendanceRecords.filter(
+    const totalAbsent = attendanceRecords.filter(
       (record) => record.status === "Absent",
     ).length;
 
@@ -320,7 +332,7 @@ export const getEmployeeMonthlyAbsent = async (
       employeeId,
       month,
       year,
-      totalLateArrival,
+      totalAbsent,
     });
   } catch (error) {
     res

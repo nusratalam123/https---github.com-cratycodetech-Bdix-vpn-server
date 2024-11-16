@@ -23,7 +23,7 @@ const router = Router();
 router.get("/TotalPresent", getTodayPresentEmployees);
 
 // get today count  present employee
-router.get("/countPresent", getCountTodayPresentEmployees);
+router.get("/countPresent", getCountTodayPresentEmployees); //for graph
 
 // get today Late Arrival employee
 router.get("/TotalLate", getTodayLateArrivalEmployees);
@@ -32,18 +32,18 @@ router.get("/TotalLate", getTodayLateArrivalEmployees);
 router.get("/TotalAbsent", getTodayAbsentEmployees);
 
 // get today count absent employee
-router.get("/countAbsent", getCountTodayAbsentEmployees);
+router.get("/countAbsent", getCountTodayAbsentEmployees); //for graph
 
 // get all employee monthly present
 router.get("/Total-Month-present", getMonthlyAttendanceCounts);
 
-// get sigle employee monthly present
-router.get("/monthly/:employeeId", getEmployeeMonthlyAttendance);
+// get sigle employee monthly present count
+router.get("/monthly/:employeeId", getEmployeeMonthlyAttendance); //for graph
 
-// get sigle employee monthly late arrival
-router.get("/monthly-late/:employeeId", getEmployeeMonthlyLateArrival);
+// get sigle employee monthly late arrival count
+router.get("/monthly-late/:employeeId", getEmployeeMonthlyLateArrival); //for graph
 
-// get sigle employee monthly late arrival
+// get sigle employee monthly absent count
 router.get("/monthly-absent/:employeeId", getEmployeeMonthlyAbsent);
 
 // get all employee attandance
