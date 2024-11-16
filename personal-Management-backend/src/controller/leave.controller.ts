@@ -99,6 +99,140 @@ export const getMonthlyLeaveCounts = async (req: Request, res: Response,next: Ne
   }
 };
 
+// Controller function to get today's count of leaveStatus
+export const getTodayLeaveStatusCounts = async (req: Request, res: Response) => {
+  try {
+    // Get the start and end of today in ISO format
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const todayCounts = await Leave.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: startOfDay, $lte: endOfDay },
+        },
+      },
+      {
+        $group: {
+          _id: "$leaveStatus",
+          count: { $sum: 1 },
+        },
+      },
+    ]);
+
+    const counts = todayCounts.reduce((acc, item) => {
+      acc[item._id] = item.count;
+      return acc;
+    }, {});
+
+    res.status(200).json({
+      approved: counts["Approved"] || 0,
+      denied: counts["Denied"] || 0,
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error fetching today's leave status counts", error });
+  }
+};
+
+// Controller function to get monthly count of leaveStatus
+export const getMonthlyLeaveStatusCounts = async (req: Request, res: Response) => {
+  try {
+    const monthlyCounts = await Leave.aggregate([
+      {
+        $group: {
+          _id: {
+            month: { $month: "$createdAt" },
+            year: { $year: "$createdAt" },
+            leaveStatus: "$leaveStatus",
+          },
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $group: {
+          _id: { month: "$_id.month", year: "$_id.year" },
+          statuses: {
+            $push: {
+              leaveStatus: "$_id.leaveStatus",
+              count: "$count",
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          month: "$_id.month",
+          year: "$_id.year",
+          counts: {
+            Approved: {
+              $cond: {
+                if: {
+                  $gt: [
+                    {
+                      $arrayElemAt: [
+                        "$statuses.count",
+                        {
+                          $indexOfArray: ["$statuses.leaveStatus", "Approved"],
+                        },
+                      ],
+                    },
+                    0,
+                  ],
+                },
+                then: {
+                  $arrayElemAt: [
+                    "$statuses.count",
+                    { $indexOfArray: ["$statuses.leaveStatus", "Approved"] },
+                  ],
+                },
+                else: 0,
+              },
+            },
+            Denied: {
+              $cond: {
+                if: {
+                  $gt: [
+                    {
+                      $arrayElemAt: [
+                        "$statuses.count",
+                        { $indexOfArray: ["$statuses.leaveStatus", "Denied"] },
+                      ],
+                    },
+                    0,
+                  ],
+                },
+                then: {
+                  $arrayElemAt: [
+                    "$statuses.count",
+                    { $indexOfArray: ["$statuses.leaveStatus", "Denied"] },
+                  ],
+                },
+                else: 0,
+              },
+            },
+          },
+        },
+      },
+      {
+        $sort: { year: 1, month: 1 },
+      },
+    ]);
+
+    res.status(200).json(monthlyCounts);
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error fetching monthly leave status counts", error });
+  }
+};
+
+
 
 // Function to count leave types
 export const getCountLeaveTypes = async (req: Request, res: Response) => {
