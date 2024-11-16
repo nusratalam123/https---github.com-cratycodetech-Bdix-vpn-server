@@ -1,6 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import fetch from "node-fetch";
 import GeoFancing from "../model/geoFancing.model";
+import { Types } from "mongoose";
+import { ObjectId } from "mongodb";
 
 export const geocodeLocation = async (
   req: Request,
@@ -58,26 +60,41 @@ export const geocodeLocation = async (
   }
 };
 
-export const getSingleGeocodeLocation = async (
+
+export const getLocationsByEmployeeId = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const geocodeLocation = await GeoFancing.findById(req.params.id);
-
-    if (!geocodeLocation) {
-      throw new Error("No record found");
+    const { employeeId } = req.params; // Assuming employeeId is passed in the URL params
+    console.log(employeeId);
+    // Check if employeeId is a valid ObjectId
+    if (!ObjectId.isValid(employeeId)) {
+      return res.status(400).json({ message: "Invalid Employee ID" });
     }
 
+    // Query GeoFancing to find all locations associated with the employeeId
+    const locations = await GeoFancing.find({ employeeId });
+
+    if (!locations || locations.length === 0) {
+      return res
+        .status(404)
+        .json({ message: "No locations found for this employee" });
+    }
+
+    // Respond with the found locations
     res.status(200).json({
-      message: "geocodeLocation get successully",
-      data: geocodeLocation,
+      message: "Locations retrieved successfully",
+      address: locations[0].address,
+      lat: locations[0].latitude,
+      lon: locations[0].longitude,
     });
-  } catch (err: any) {
-    next(err);
+  } catch (err) {
+    next(err); // Pass error to error-handling middleware
   }
 };
+
 
 export const getAllGeocodeLocation = async (
   req: Request,

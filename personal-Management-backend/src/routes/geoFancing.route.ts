@@ -2,16 +2,22 @@ import { Router } from "express";
 import {
   geocodeLocation,
   getAllGeocodeLocation,
-  getSingleGeocodeLocation,
+  getLocationsByEmployeeId,
   getsingleEmployeeLocation,
 } from "../controller/geoFancing.controller";
 
 const router = Router();
 
-router.post("/create", geocodeLocation);
+//get all employee geofancing info
 router.get("/all", getAllGeocodeLocation);
+
 // get single employee
-router.get("/single/:id", getSingleGeocodeLocation);
+router.get("/single/:employeeId", getLocationsByEmployeeId);
+
+//get single employeeId ,employeeName,location
 router.get("/single-employee", getsingleEmployeeLocation);
+
+// create employee latitude and longitude according to location
+router.post("/create", geocodeLocation);
 
 export default router;
