@@ -260,6 +260,50 @@ export const getEmployeeMonthlyAttendance = async (
   }
 };
 
+// Function to get employee monthly attendance count like present,late arrival,absent
+export const getAllEmployeeMonthlyAttendancecount = async (
+  req: Request,
+  res: Response,
+) => {
+  try {
+    const month = parseInt(req.query.month as string);
+    const year = parseInt(req.query.year as string);
+
+    const start = startOfMonth(new Date(year, month - 1));
+    const end = endOfMonth(new Date(year, month - 1));
+
+    // Find attendance records for the employee within the specified month
+    const attendanceRecords = await Attendance.find({
+      date: { $gte: start, $lte: end },
+    });
+
+    // Count the total days marked as "Present" and "LateArrival" and "absent"
+    const totalPresent = attendanceRecords.filter(
+      (record) => record.status === "Present",
+    ).length;
+    const totalLateArrival = attendanceRecords.filter(
+      (record) => record.status === "LateArrival",
+    ).length;
+    const totalAbssent = attendanceRecords.filter(
+      (record) => record.status === "Absent",
+    ).length;
+
+    const present=totalPresent+totalLateArrival
+
+    res.status(200).json({
+      msg: " get all employee attendance count",
+      present,
+      totalLateArrival,
+      totalAbssent,
+
+    });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Error retrieving attendance data", error });
+  }
+};
+
 // Function to get employee monthly late arrivalattendance
 export const getEmployeeMonthlyLateArrival = async (
   req: Request,

@@ -11,6 +11,7 @@ import {
   getEmployeeMonthlyLateArrival,
   getEmployeeMonthlyAbsent,
   getSingleEmployee,
+  getAllEmployeeMonthlyAttendancecount,
   markAttendance,
   setDefaultAttendance,
   updateattendance,
@@ -45,6 +46,9 @@ router.get("/monthly-late/:employeeId", getEmployeeMonthlyLateArrival); //for gr
 
 // get sigle employee monthly absent count
 router.get("/monthly-absent/:employeeId", getEmployeeMonthlyAbsent);
+
+// get all employee monthly attandance count
+router.get("/all/monthly-attendance", getAllEmployeeMonthlyAttendancecount);//for leave page graph
 
 // get all employee attandance
 router.get("/all", getAllEmployeeAttendance);
