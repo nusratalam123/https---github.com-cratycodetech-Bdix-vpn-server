@@ -23,10 +23,12 @@ router.get("/single/:id", getSingleLeave);
 router.get("/type", getCountLeaveTypes);
 
 // get count value according to  type of leave  employee
-router.get("/leave-counts", getMonthlyLeaveCounts);
+router.get("/leave-counts", getMonthlyLeaveCounts); //for graph
 
-router.get("/today-leave-status-counts", getTodayLeaveStatusCounts);
+// get count today value according to  type of leave status  employee
+router.get("/today-leave-status-counts", getTodayLeaveStatusCounts); //for graph
 
+// get count monthly value according to  type of leave status  employee
 router.get("/leave-status-counts", getMonthlyLeaveStatusCounts);
 
 // employee create leave

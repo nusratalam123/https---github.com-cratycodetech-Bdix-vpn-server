@@ -15,8 +15,8 @@ const leaveSchema = new Schema<Leave>(
     },
     leaveStatus: {
       type: String,
-      enum: ["Approved", "Denied"],
-      default: "Approved",
+      enum: ["Approved", "Denied","Pending"],
+      default: "Pending",
     },
     leaveType: {
       type: String,

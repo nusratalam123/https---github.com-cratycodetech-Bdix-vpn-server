@@ -102,7 +102,6 @@ export const getMonthlyLeaveCounts = async (req: Request, res: Response,next: Ne
 // Controller function to get today's count of leaveStatus
 export const getTodayLeaveStatusCounts = async (req: Request, res: Response) => {
   try {
-    // Get the start and end of today in ISO format
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
 
@@ -130,6 +129,7 @@ export const getTodayLeaveStatusCounts = async (req: Request, res: Response) => 
 
     res.status(200).json({
       approved: counts["Approved"] || 0,
+      pending: counts["Pending"] || 0,
       denied: counts["Denied"] || 0,
     });
   } catch (error) {
